@@ -82,5 +82,5 @@ fn prop_rotation_to_actor_space(rot: Quat, actor: Transform) -> Quat {
     let world_to_actor = actor.compute_affine().inverse();
     let rot_to_world = Transform::from_rotation(rot).compute_affine();
     let local_affine = world_to_actor * rot_to_world;
-    Quat::from_affine3(&local_affine)
+    Quat::from_affine3a(&local_affine)
 }

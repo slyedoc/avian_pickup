@@ -205,7 +205,7 @@ fn prop_rotation_from_actor_space(rot: Quat, actor: Transform) -> Quat {
     let actor_matrix = actor.compute_affine();
     let rot_to_actor = Transform::from_rotation(rot).compute_affine();
     let out_affine = actor_matrix * rot_to_actor;
-    Quat::from_affine3(&out_affine)
+    Quat::from_affine3a(&out_affine)
 }
 
 #[cfg(test)]
