@@ -1,5 +1,7 @@
+use std::convert::Infallible;
+
 use crate::prelude::*;
-use rand::RngCore;
+use rand::Rng;
 
 pub(super) fn plugin(app: &mut App) {
     app.init_resource::<RngSource>();
@@ -8,24 +10,27 @@ pub(super) fn plugin(app: &mut App) {
 /// A resource that provides a source of randomness.
 /// Will fall back to [`rand::rng()`] if no source is provided.
 #[derive(Resource, Default)]
-pub struct RngSource(pub Option<Box<dyn RngCore + Send + Sync>>);
+pub struct RngSource(pub Option<Box<dyn Rng + Send + Sync>>);
 
-impl RngCore for RngSource {
-    fn next_u32(&mut self) -> u32 {
-        self.run(|rng| rng.next_u32())
+impl rand::TryRng for RngSource {
+    type Error = Infallible;
+
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
+        Ok(self.run(|rng| rng.next_u32()))
     }
 
-    fn next_u64(&mut self) -> u64 {
-        self.run(|rng| rng.next_u64())
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
+        Ok(self.run(|rng| rng.next_u64()))
     }
 
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        self.run(|rng| rng.fill_bytes(dest))
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        self.run(|rng| rng.fill_bytes(dest));
+        Ok(())
     }
 }
 
 impl RngSource {
-    fn run<Out>(&mut self, f: impl FnOnce(&mut dyn RngCore) -> Out) -> Out {
+    fn run<Out>(&mut self, f: impl FnOnce(&mut dyn Rng) -> Out) -> Out {
         if let Some(rng) = self.0.as_mut() {
             f(rng)
         } else {

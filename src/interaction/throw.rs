@@ -1,7 +1,7 @@
 use std::ops::RangeInclusive;
 
 use avian3d::math::Scalar;
-use rand::Rng;
+use rand::{Rng, RngExt};
 
 use crate::{prelude::*, rng::RngSource, verb::Throwing};
 

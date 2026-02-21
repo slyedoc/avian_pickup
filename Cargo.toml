@@ -19,7 +19,7 @@ default = ["avian3d/f32", "avian3d/parry-f32"]
 serialize = ["dep:serde", "bevy/serialize", "avian3d/serialize"]
 
 [dependencies]
-rand = "0.9"
+rand = "0.10"
 serde = { version = "1.0.210", optional = true }
 bevy_ecs = { git = "https://github.com/bevyengine/bevy", branch = "main", default-features = false }
 bevy_app = { git = "https://github.com/bevyengine/bevy", branch = "main", default-features = false }
