@@ -40,6 +40,11 @@ features = ["3d", "default-collider"]
 [dev-dependencies]
 bevy = { git = "https://github.com/bevyengine/bevy", branch = "main", features = ["dynamic_linking"] }
 
+[patch.crates-io]
+parry3d = { git = "https://github.com/slyedoc/parry", branch = "bevy-main" }
+parry3d-f64 = { git = "https://github.com/slyedoc/parry", branch = "bevy-main" }
+glamx = { git = "https://github.com/slyedoc/glamx", branch = "bevy-main" }
+
 # Enable a small amount of optimization in debug mode
 [profile.dev]
 opt-level = 1

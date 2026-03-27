@@ -56,6 +56,8 @@ impl SetVerb {
 }
 
 impl EntityCommand for SetVerb {
+    type Out = ();
+
     fn apply(self, entity_world: EntityWorldMut) {
         let actor = entity_world.id();
         entity_world
