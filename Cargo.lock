@@ -362,8 +362,8 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "avian3d"
-version = "0.6.0-dev"
-source = "git+https://github.com/slyedoc/avian?branch=bevy-main#982ee79257ae00b6fba3ec4534e25eff5e978f04"
+version = "0.7.0-dev"
+source = "git+https://github.com/slyedoc/avian?branch=multiframe#1c1a847116c541bfddaa72c58d81363ecf39a74f"
 dependencies = [
  "approx",
  "avian_derive",
@@ -388,7 +388,7 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.2"
-source = "git+https://github.com/slyedoc/avian?branch=bevy-main#982ee79257ae00b6fba3ec4534e25eff5e978f04"
+source = "git+https://github.com/slyedoc/avian?branch=multiframe#1c1a847116c541bfddaa72c58d81363ecf39a74f"
 dependencies = [
  "proc-macro-error2",
  "proc-macro2",
