@@ -82,7 +82,7 @@ fn spawn_text(example: Example) -> impl Fn(Commands) {
                     .spawn((
                         Text::default(),
                         TextFont {
-                            font_size: 25.0,
+                            font_size: FontSize::Px(25.0),
                             ..default()
                         },
                     ))
