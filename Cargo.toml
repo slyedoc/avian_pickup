@@ -33,7 +33,7 @@ bevy_log = { git = "https://github.com/bevyengine/bevy", branch = "main", defaul
 
 [dependencies.avian3d]
 git = "https://github.com/slyedoc/avian"
-branch = "multi-world"
+branch = "solari-multi"
 default-features = false
 features = ["3d", "default-collider"]
 

@@ -377,7 +377,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 [[package]]
 name = "avian3d"
 version = "0.8.0-dev"
-source = "git+https://github.com/slyedoc/avian?branch=multi-world#cde05b6fbcc4aeea7032db5dd56232e381bec5c9"
+source = "git+https://github.com/slyedoc/avian?branch=solari-multi#0253f30a7fdeecc78367bdfaad94daf7716c4108"
 dependencies = [
  "approx",
  "avian_derive",
@@ -402,7 +402,7 @@ dependencies = [
 [[package]]
 name = "avian_derive"
 version = "0.2.3"
-source = "git+https://github.com/slyedoc/avian?branch=multi-world#cde05b6fbcc4aeea7032db5dd56232e381bec5c9"
+source = "git+https://github.com/slyedoc/avian?branch=solari-multi#0253f30a7fdeecc78367bdfaad94daf7716c4108"
 dependencies = [
  "proc-macro-error3",
  "proc-macro2",
