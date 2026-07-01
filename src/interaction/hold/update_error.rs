@@ -1,3 +1,4 @@
+use bevy_math::ToRender;
 use bevy_time::Time;
 
 use super::{HoldSystem, prelude::*};
@@ -27,7 +28,7 @@ pub fn update_error(
             error!("Prop entity was deleted or in an invalid state. Ignoring.");
             continue;
         };
-        let mut error = (prop_transform.translation() - shadow.target_position).length();
+        let mut error = (prop_transform.translation().to_render() - shadow.target_position).length();
         if hold_error.error_time > 1.0 {
             hold_error.error_time = 1.0;
         }

@@ -1,6 +1,7 @@
 use super::Prop;
 use crate::{math::METERS_PER_INCH, prelude::*};
 use bevy_ecs::relationship::Relationship as _;
+use bevy_math::ToRender;
 
 /// Inspired by [`CWeaponPhysCannon::FindObjectInCone`](https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/server/hl2/weapon_physcannon.cpp#L2690)
 pub(super) fn find_prop_in_cone(
@@ -26,8 +27,8 @@ pub(super) fn find_prop_in_cone(
     let rigid_bodies = spatial_query
         .shape_intersections(
             &box_collider,
-            origin.translation,
-            origin.rotation,
+            origin.translation.to_render(),
+            origin.rotation.to_render(),
             &config.prop_filter,
         )
         .into_iter()
@@ -40,14 +41,14 @@ pub(super) fn find_prop_in_cone(
     for rigid_body in rigid_bodies {
         let Ok(object_translation) = q_position
             .get(rigid_body)
-            .map(|transform| transform.translation())
+            .map(|transform| transform.translation().to_render())
         else {
             error!("Prop entity was deleted or in an invalid state. Ignoring.");
             continue;
         };
 
         // Closer than other objects
-        let los = object_translation - origin.translation;
+        let los = object_translation - origin.translation.to_render();
         if los.length_squared() >= nearest_dist * nearest_dist {
             continue;
         }
@@ -60,8 +61,13 @@ pub(super) fn find_prop_in_cone(
         }
 
         // Make sure it isn't occluded by terrain
-        if let Some(hit) =
-            spatial_query.cast_ray(origin.translation, los, dist, true, &config.obstacle_filter)
+        if let Some(hit) = spatial_query.cast_ray(
+            origin.translation.to_render(),
+            los,
+            dist,
+            true,
+            &config.obstacle_filter,
+        )
         {
             let hit_rigid_body = q_collider_parent
                 .get(hit.entity)

@@ -1,3 +1,5 @@
+use bevy_math::{Affine3A, ToPrecision, ToRender};
+
 use super::{HoldSystem, prelude::*};
 use crate::{
     math::rigid_body_compound_collider,
@@ -62,11 +64,12 @@ fn set_targets(
         let pitch_range = clamp_pitch
             .map(|c| &c.0)
             .unwrap_or(&config.hold.pitch_range);
-        let (actor_yaw, actor_pitch, actor_roll) = actor_transform.rotation.to_euler(EulerRot::YXZ);
+        let (actor_yaw, actor_pitch, actor_roll) =
+            actor_transform.rotation.to_render().to_euler(EulerRot::YXZ);
         let actor_to_prop_pitch = actor_pitch.clamp(*pitch_range.start(), *pitch_range.end());
         let clamped_rotation =
             Quat::from_euler(EulerRot::YXZ, actor_yaw, actor_to_prop_pitch, actor_roll);
-        let forward = Transform::from_rotation(clamped_rotation).forward();
+        let forward = Transform::from_rotation(clamped_rotation.to_precision()).forward();
         // We can't cast a ray wrt an entire rigid body out of the box,
         // so we manually collect all colliders in the hierarchy and
         // construct a compound collider.
@@ -85,7 +88,7 @@ fn set_targets(
             continue;
         };
         let prop_radius_wrt_direction =
-            collider_get_extent(&prop_collider, prop_transform.rotation, -forward);
+            collider_get_extent(&prop_collider, prop_transform.rotation.to_render(), -forward);
         let Some(prop_radius_wrt_direction) = prop_radius_wrt_direction else {
             error!(
                 "Failed to get collider extent: Parry failed to find a hit with its AABB. Ignoring prop."
@@ -117,7 +120,7 @@ fn set_targets(
         // The 2013 code uses the non-clamped code here, resulting in the prop
         // rotating when looking further up than the clamp allows.
         // Looks weird imo, so we use the clamped rotation.
-        let clamped_actor_transform = actor_transform.with_rotation(clamped_rotation);
+        let clamped_actor_transform = actor_transform.with_rotation(clamped_rotation.to_precision());
         shadow.target_rotation =
             prop_rotation_from_actor_space(actor_space_rotation, clamped_actor_transform);
 
@@ -125,20 +128,21 @@ fn set_targets(
         // This looks really weird when holding, so let's hold it at the center of mass instead.
         // Note that the following calculation is distinct from just `prop_center_of_mass.0`,
         // as that one would be the offset if the prop had no rotation.
-        let global_center_of_mass = prop_transform.transform_point(prop_center_of_mass.0);
-        let center_of_mass_offset = global_center_of_mass - prop_transform.translation;
+        let global_center_of_mass =
+            prop_transform.transform_point(prop_center_of_mass.0.to_precision());
+        let center_of_mass_offset = (global_center_of_mass - prop_transform.translation).to_render();
         // Adjusting the actor's transform to the center of mass of the prop might
         // seem backwards, but it's mathematically identical to offsetting the result
         // of any calculation by the center of mass offset. This just does it at the "input"
         // instead of the "output" of the calculation.
         let center_of_mass_adjusted_actor_transform =
-            actor_transform.translation - center_of_mass_offset;
+            actor_transform.translation.to_render() - center_of_mass_offset;
 
         let terrain_hit = spatial_query.cast_shape(
             &prop_collider,
             center_of_mass_adjusted_actor_transform,
             // more stable results if we use the prop' actual rotation instead of the target rotation
-            prop_transform.rotation,
+            prop_transform.rotation.to_render(),
             forward,
             &ShapeCastConfig {
                 max_distance: f32::MAX,
@@ -202,8 +206,8 @@ fn collider_get_extent(collider: &Collider, rotation: Quat, dir: Dir3) -> Option
 
 /// TransformAnglesFromPlayerSpace
 fn prop_rotation_from_actor_space(rot: Quat, actor: Transform) -> Quat {
-    let actor_matrix = actor.compute_affine();
-    let rot_to_actor = Transform::from_rotation(rot).compute_affine();
+    let actor_matrix = actor.compute_affine().to_render();
+    let rot_to_actor = Affine3A::from_quat(rot);
     let out_affine = actor_matrix * rot_to_actor;
     Quat::from_affine3a(&out_affine)
 }

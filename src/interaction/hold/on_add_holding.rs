@@ -1,5 +1,6 @@
 use super::prelude::HoldError;
 use crate::{prelude::*, prop::PrePickupRotation, verb::Holding};
+use bevy_math::{Affine3A, ToRender};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_observer(on_add_holding);
@@ -44,7 +45,7 @@ pub fn on_add_holding(
     };
 
     let actor_space_rotation =
-        prop_rotation_to_actor_space(prop_transform.rotation(), actor_transform);
+        prop_rotation_to_actor_space(prop_transform.rotation().to_render(), actor_transform);
     if let Some(mut pre_pickup_rotation) = pre_pickup_rotation {
         pre_pickup_rotation.0 = actor_space_rotation;
     } else {
@@ -79,8 +80,8 @@ pub fn on_add_holding(
 
 /// TransformAnglesToPlayerSpace
 fn prop_rotation_to_actor_space(rot: Quat, actor: Transform) -> Quat {
-    let world_to_actor = actor.compute_affine().inverse();
-    let rot_to_world = Transform::from_rotation(rot).compute_affine();
+    let world_to_actor = actor.compute_affine().to_render().inverse();
+    let rot_to_world = Affine3A::from_quat(rot);
     let local_affine = world_to_actor * rot_to_world;
     Quat::from_affine3a(&local_affine)
 }

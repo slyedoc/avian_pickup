@@ -1,5 +1,6 @@
 use std::f32::consts::{PI, TAU};
 
+use bevy_math::ToRender;
 use bevy_time::Time;
 
 use super::{HoldSystem, prelude::ShadowParams};
@@ -32,9 +33,9 @@ fn set_velocities(
         };
         let prop_transform = prop_transform.compute_transform();
 
-        let delta_position = shadow.target_position - prop_transform.translation;
+        let delta_position = shadow.target_position - prop_transform.translation.to_render();
 
-        let delta_rotation = shadow.target_rotation * prop_transform.rotation.inverse();
+        let delta_rotation = shadow.target_rotation * prop_transform.rotation.to_render().inverse();
         let (axis, angle) = delta_rotation.to_axis_angle();
         // This is needed because otherwise we will sometimes rotate the long way around
         let angle = if angle > PI { angle - TAU } else { angle };

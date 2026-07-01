@@ -1,6 +1,7 @@
 use super::Prop;
 use crate::prelude::*;
 use bevy_ecs::relationship::Relationship as _;
+use bevy_math::ToRender;
 /// Inspired by [`CWeaponPhysCannon::FindObjectTrace`](https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/server/hl2/weapon_physcannon.cpp#L2470)
 pub(super) fn find_prop_in_trace(
     spatial_query: &SpatialQuery,
@@ -22,7 +23,7 @@ pub(super) fn find_prop_in_trace(
     };
     let hit = spatial_query
         .cast_ray_predicate(
-            origin.translation,
+            origin.translation.to_render(),
             origin.forward(),
             test_length,
             true,
@@ -37,7 +38,7 @@ pub(super) fn find_prop_in_trace(
         })
         .filter(|(rigid_body, distance)| {
             if let Some(terrain_hit) = spatial_query.cast_ray(
-                origin.translation,
+                origin.translation.to_render(),
                 origin.forward(),
                 *distance,
                 true,
@@ -65,8 +66,8 @@ pub(super) fn find_prop_in_trace(
             Cuboid::from_size(Vec3::splat(2. * MAGIC_HALF_EXTENT_ASK_VALVE)).into();
         let hit = spatial_query.cast_shape_predicate(
             &fake_aabb_because_parry_cannot_do_aabb_casts,
-            origin.translation,
-            origin.rotation,
+            origin.translation.to_render(),
+            origin.rotation.to_render(),
             origin.forward(),
             &ShapeCastConfig::from_max_distance(test_length),
             &config.prop_filter,
@@ -75,8 +76,8 @@ pub(super) fn find_prop_in_trace(
         hit.filter(|hit| {
             if let Some(terrain_hit) = spatial_query.cast_shape(
                 &fake_aabb_because_parry_cannot_do_aabb_casts,
-                origin.translation,
-                origin.rotation,
+                origin.translation.to_render(),
+                origin.rotation.to_render(),
                 origin.forward(),
                 &ShapeCastConfig::from_max_distance(hit.distance),
                 &config.obstacle_filter,

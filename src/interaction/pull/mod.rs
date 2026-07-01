@@ -2,6 +2,7 @@ use crate::{
     prelude::*,
     verb::{Pulling, SetVerb, Verb},
 };
+use bevy_math::ToRender;
 
 mod can_pull;
 mod find_in_cone;
@@ -82,8 +83,9 @@ fn find_object(
                 .entity(actor)
                 .queue(SetVerb::new(Verb::Hold(prop.entity)));
         } else {
-            let direction =
-                (actor_transform.translation - prop_position.translation()).normalize_or_zero();
+            let direction = (actor_transform.translation - prop_position.translation())
+                .to_render()
+                .normalize_or_zero();
             let mass_adjustment = adjust_impulse_for_mass(mass);
             let pull_impulse = direction * config.pull.impulse * mass_adjustment;
             cooldown.pull();
